@@ -13,9 +13,9 @@ networks:
 
 services:
   identity:
-    # image: reactioncommerce/identity:3.3.1
-    build:
-      context: .
+    image: luiscelano/reaction-identity-lulis:1.0.0
+    # build:
+    #   context: .
     env_file:
       - ./.env
     networks:
