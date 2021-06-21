@@ -12,7 +12,7 @@ import Field from "@reactioncommerce/components/Field/v1";
 import InlineAlert from "@reactioncommerce/components/InlineAlert/v1";
 import TextInput from "@reactioncommerce/components/TextInput/v1";
 import { Meteor } from "meteor/meteor";
-
+import {signInWithFacebook,signInWithGoogle} from "../../services/auth.js"
 /**
  * @summary Does `Meteor.loginWithPassword` followed by
  *   calling the "oauth/login" method.
@@ -51,7 +51,7 @@ const useStyles = makeStyles(() => ({
     marginBottom: 16
   },
   pageTitle: {
-    color: "#1999dd",
+    color: "#0095b3",
     fontFamily: "'Source Sans Pro', 'Roboto', 'Helvetica Neue', Helvetica, sans-serif",
     fontSize: 30,
     fontWeight: 400,
@@ -86,7 +86,34 @@ function SignIn() {
   const [submitError, setSubmitError] = useState(null);
 
   const { login_challenge: challenge } = queryString.parse(location.search);
-
+  const authWithFacebook =async ()=>{
+    setIsSubmitting(true);
+      let redirectUrl;
+      try {
+        redirectUrl = await signInWithFacebook({ challenge });
+      } catch (error) {
+        setSubmitError(error.message);
+        setIsSubmitting(false);
+        return { ok: false };
+      }
+      setIsSubmitting(false);
+      if (redirectUrl) window.location.href = redirectUrl;
+      return { ok: true };
+  }
+  const authWithGoogle = async () =>{
+    setIsSubmitting(true);
+      let redirectUrl;
+      try {
+        redirectUrl = await signInWithGoogle({ challenge });
+      } catch (error) {
+        setSubmitError(error.message);
+        setIsSubmitting(false);
+        return { ok: false };
+      }
+      setIsSubmitting(false);
+      if (redirectUrl) window.location.href = redirectUrl;
+      return { ok: true };
+  }
   const {
     getErrors,
     getInputProps,
@@ -159,6 +186,24 @@ function SignIn() {
         onClick={submitForm}
       >
         {t("signIn")}
+      </Button>
+      <Button
+        actionType="important"
+        isFullWidth
+        isTextOnly
+        isWaiting={isSubmitting}
+        onClick={authWithFacebook}
+      >
+        {t("signInWithFacebook")}
+      </Button>
+      <Button
+        actionType="important"
+        isFullWidth
+        isTextOnly
+        isWaiting={isSubmitting}
+        onClick={authWithGoogle}
+      >
+        {t("signInWithGoogle")}
       </Button>
       <Button
         isDisabled={isSubmitting}

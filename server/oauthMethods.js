@@ -46,3 +46,32 @@ export function oauthLogin(options) {
       throw error;
     });
 }
+export function checkIfUserExists(userId){
+    return(Meteor.users.findOne({_id:userId})) ?true :false;
+}
+export function extendFbUser(){
+  var user = Meteor.user();
+  if (user.hasOwnProperty('services') && user.services.hasOwnProperty('facebook')  ) {
+    var fb = user.services.facebook;
+    // var result = Meteor.('https://graph.facebook.com/v2.4/' + fb.id + '?access_token=' + fb.accessToken + '&fields=name,email');
+    Meteor.users.update({_id: user._id}, {
+      $addToSet: { "emails": {
+        'address': fb.email,
+        'verified': false
+      }}
+    });
+  }
+}
+export function extendGoogleUser(){
+  var user = Meteor.user();
+  if (user.hasOwnProperty('services') && user.services.hasOwnProperty('google')  ) {
+    var google = user.services.google;
+    // var result = Meteor.('https://graph.facebook.com/v2.4/' + fb.id + '?access_token=' + fb.accessToken + '&fields=name,email');
+    Meteor.users.update({_id: user._id}, {
+      $addToSet: { "emails": {
+        'address': google.email,
+        'verified': false
+      }}
+    });
+  }
+}

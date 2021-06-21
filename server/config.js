@@ -10,5 +10,9 @@ export default envalid.cleanEnv(process.env, {
   HYDRA_SESSION_LIFESPAN: num({ default: 86400 }),
   MOCK_TLS_TERMINATION: bool({ default: false }),
   OAUTH2_CLIENT_DOMAINS: str({ default: "" }),
-  ROOT_URL: str()
+  ROOT_URL: str(),
+  FACEBOOK_APP_ID:str(),
+  FACEBOOK_SECRET:str(),
+  GOOGLE_CLIENT_ID:str(),
+  GOOGLE_SECRET:str()
 });

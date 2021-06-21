@@ -12,6 +12,9 @@
   "resetYourPassword": "Restablecer tu contraseña",
   "setPassword": "Establecer contraseña",
   "signIn": "Iniciar sesión",
+  "signInWithFacebook":"iniciar sesión con Facebook",
+  "signInWithGoogle":"Iniciar sesión con Google",
+  "signInWithTwitter":"Iniciar sesión con Twitter",
   "signUp": "Registrar",
   "signUpButton": "Registrar",
   "updateYourPassword": "Actualiza tu contraseña"
