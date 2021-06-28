@@ -23,7 +23,7 @@ ServiceConfiguration.configurations.insert(
   {service:'facebook'},
   {
     $set:{
-      appId:config.FACEBOOK_APP_ID,
+      appId:`${config.FACEBOOK_APP_ID}`,
       secret:config.FACEBOOK_SECRET,
       loginStyle: "popup",
     }

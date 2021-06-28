@@ -13,7 +13,7 @@ networks:
 
 services:
   identity:
-    image: luiscelano/reaction-identity-lulis:1.0.0
+    image: luiscelano/reaction-identity-lulis:1.0.1
     # build:
     #   context: .
     env_file:
