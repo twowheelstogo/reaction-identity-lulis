@@ -2,7 +2,7 @@ import {Meteor} from "meteor/meteor";
 export function signInWithFacebook({challenge}){
     return new Promise((resolve,reject)=>{
         Meteor.loginWithFacebook({
-            requestPermissions:['email']
+            requestPermissions:['email', 'public_profile']
         },async(err)=>{
             if(err){
                 reject(err);
@@ -28,7 +28,7 @@ export function signInWithFacebook({challenge}){
 export function signInWithGoogle({challenge}){
     return new Promise((resolve,reject)=>{
         Meteor.loginWithGoogle({
-            requestPermissions:['email'],
+            requestPermissions:['email', 'public_profile'],
         },(err)=>{
             if(err){
                 reject(err);

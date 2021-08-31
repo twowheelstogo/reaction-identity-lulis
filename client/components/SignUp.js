@@ -25,9 +25,9 @@ import { Meteor } from "meteor/meteor";
  * @return {Promise<String|undefined>} Redirect URL or `undefined` if no
  *   `challenge` argument was passed.
  */
-function callSignUp({ challenge, email, password }) {
+function callSignUp({ challenge, email, password, firstName, lastName }) {
   return new Promise((resolve, reject) => {
-    Accounts.createUser({ email, password }, (error) => {
+    Accounts.createUser({ email, password, profile: { firstName, lastName } }, (error) => {
       if (error) {
         reject(error);
       } else {
@@ -35,6 +35,11 @@ function callSignUp({ challenge, email, password }) {
           resolve();
           return;
         }
+        // Meteor.call("oauth/updateUserInfo", { firstName, lastName }, (err) => {
+        //   if (err) {
+        //     reject(err);
+        //   }
+        // });
         Meteor.call("oauth/login", { challenge }, (oauthLoginError, redirectUrl) => {
           if (oauthLoginError) {
             reject(oauthLoginError);
@@ -69,6 +74,13 @@ const formSchema = new SimpleSchema({
   password: {
     type: String,
     min: 6
+  },
+  firstName: {
+    type: String
+  },
+  lastName: {
+    type: String,
+    optional: true
   }
 });
 const validator = formSchema.getFormValidator();
@@ -117,6 +129,33 @@ function SignUp() {
         {t("createAccount")}
       </div>
 
+      <Field
+        errors={getErrors(["firstName"])}
+        isRequired
+        label={t("firstName")}
+        labelFor={`firstName-${uniqueId}`}
+        name="firstName"
+      >
+        <TextInput
+          type="text"
+          id={`firstName-${uniqueId}`}
+          {...getInputProps("firstName")}
+        />
+        <ErrorsBlock errors={getErrors(["firstName"])} />
+      </Field>
+      <Field
+        errors={getErrors(["lastName"])}
+        label={t("lastName")}
+        labelFor={`lastName-${uniqueId}`}
+        name="lastName"
+      >
+        <TextInput
+          type="text"
+          id={`lastName-${uniqueId}`}
+          {...getInputProps("lastName")}
+        />
+        <ErrorsBlock errors={getErrors(["lastName"])} />
+      </Field>
       <Field
         errors={getErrors(["email"])}
         isRequired
