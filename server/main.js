@@ -2,7 +2,7 @@ import { Meteor, } from "meteor/meteor";
 import { ServiceConfiguration } from "meteor/service-configuration";
 import Logger from "@reactioncommerce/logger";
 import config from "./config.js";
-import { oauthLogin, checkIfUserExists, extendFbUser, extendGoogleUser, UpdateUserInfo } from "./oauthMethods.js";
+import { oauthLogin, checkIfUserExists, extendFbUser, extendGoogleUser, UpdateUserInfo, isNewUser, authAfterPopup } from "./oauthMethods.js";
 
 Meteor.methods({
   "getGraphQLApiUrl": () => config.API_URL,
@@ -10,7 +10,9 @@ Meteor.methods({
   "oauth/checkIfUserExists": checkIfUserExists,
   "oauth/extendFbUser": extendFbUser,
   "oauth/extendGoogleUser": extendGoogleUser,
-  "oauth/updateUserInfo": UpdateUserInfo
+  "oauth/updateUserInfo": UpdateUserInfo,
+  "oauth/isNewUser": isNewUser,
+  "oauth/authAfterPopup": authAfterPopup
 });
 
 // Init endpoints

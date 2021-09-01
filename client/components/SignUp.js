@@ -2,6 +2,7 @@ import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory, useLocation } from "react-router-dom";
 import { makeStyles } from "@material-ui/core";
+import { Button as MaterialButton, Box } from "@material-ui/core"
 import queryString from "query-string";
 import SimpleSchema from "simpl-schema";
 import useReactoForm from "reacto-form/cjs/useReactoForm";
@@ -13,6 +14,7 @@ import InlineAlert from "@reactioncommerce/components/InlineAlert/v1";
 import TextInput from "@reactioncommerce/components/TextInput/v1";
 import { Accounts } from "meteor/accounts-base";
 import { Meteor } from "meteor/meteor";
+import { SignUpWithGoogle, signInWithFacebook } from "../../services/auth";
 
 /**
  * @summary Does `Accounts.createUser` followed by
@@ -27,7 +29,7 @@ import { Meteor } from "meteor/meteor";
  */
 function callSignUp({ challenge, email, password, firstName, lastName }) {
   return new Promise((resolve, reject) => {
-    Accounts.createUser({ email, password, profile: { firstName, lastName } }, (error) => {
+    Accounts.createUser({ email, password, profile: { firstName, lastName, name: `${firstName} ${lastName}` } }, (error) => {
       if (error) {
         reject(error);
       } else {
@@ -52,6 +54,7 @@ function callSignUp({ challenge, email, password, firstName, lastName }) {
   });
 }
 
+
 const useStyles = makeStyles(() => ({
   inlineAlert: {
     marginBottom: 16
@@ -63,6 +66,9 @@ const useStyles = makeStyles(() => ({
     fontWeight: 400,
     marginBottom: 40,
     textAlign: "center"
+  },
+  button: {
+    width: '100%'
   }
 }));
 
@@ -98,8 +104,40 @@ function SignUp() {
   const location = useLocation();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(null);
+  const [value, setValue] = useState({});
 
   const { login_challenge: challenge } = queryString.parse(location.search);
+
+  const signUpWithFacebook = async () => {
+    setIsSubmitting(true);
+    let redirectUrl;
+    try {
+      redirectUrl = await signInWithFacebook({ challenge });
+    } catch (error) {
+      setSubmitError(error.message);
+      setIsSubmitting(false);
+      return { ok: false };
+    }
+    setIsSubmitting(false);
+    if (redirectUrl) window.location.href = redirectUrl;
+    return { ok: true };
+  };
+
+  const signUpWithGoogle = async () => {
+    setIsSubmitting(true);
+    let redirectUrl;
+    try {
+      redirectUrl = await SignUpWithGoogle({ challenge, ...value });
+    } catch (error) {
+      setSubmitError(error.message);
+      setIsSubmitting(false);
+      return { ok: false };
+    }
+    setIsSubmitting(false);
+
+    if (redirectUrl) window.location.href = redirectUrl;
+    return { ok: true };
+  };
 
   const {
     getErrors,
@@ -120,7 +158,10 @@ function SignUp() {
       if (redirectUrl) window.location.href = redirectUrl;
       return { ok: true };
     },
-    validator
+    validator,
+    onChange(formData) {
+      setValue(formData)
+    }
   });
 
   return (
@@ -132,7 +173,7 @@ function SignUp() {
       <Field
         errors={getErrors(["firstName"])}
         isRequired
-        label={t("firstName")}
+        label={"Primer nombre"}
         labelFor={`firstName-${uniqueId}`}
         name="firstName"
       >
@@ -145,7 +186,7 @@ function SignUp() {
       </Field>
       <Field
         errors={getErrors(["lastName"])}
-        label={t("lastName")}
+        label={"Segundo nombre"}
         labelFor={`lastName-${uniqueId}`}
         name="lastName"
       >
@@ -210,6 +251,34 @@ function SignUp() {
       >
         {t("signIn")}
       </Button>
+      <Box paddingTop={1}>
+        <MaterialButton
+          variant="outlined"
+          active={isSubmitting}
+          onClick={signUpWithFacebook}
+          className={classes.button}
+          startIcon={
+            <img alt='' src="https://firebasestorage.googleapis.com/v0/b/twowheelstogo-572d7.appspot.com/o/resources%2Ffb.png?alt=media&token=d52db856-b93a-4c9b-896c-53a9d29ed2cd"
+              width={20} height={20} />
+          }
+        >
+          {t("signUpWithFacebook")}
+        </MaterialButton>
+      </Box>
+      <Box paddingTop={1}>
+        <MaterialButton
+          variant="outlined"
+          active={isSubmitting}
+          onClick={signUpWithGoogle}
+          className={classes.button}
+          startIcon={
+            <img alt='' src="https://firebasestorage.googleapis.com/v0/b/twowheelstogo-572d7.appspot.com/o/resources%2Fgoogle.png?alt=media&token=a7f6ec8a-bc84-4235-8a57-38d10c027ec7"
+              width={20} height={20} />
+          }
+        >
+          {t("signUpWithGoogle")}
+        </MaterialButton>
+      </Box>
     </div>
   );
 }

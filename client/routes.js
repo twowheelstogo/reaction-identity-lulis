@@ -1,4 +1,5 @@
 import ChangePassword from "./components/ChangePassword.js";
+import CreateAccount from "./components/CreateAccount.js";
 import ForgotPassword from "./components/ForgotPassword.js";
 import OAuthError from "./components/OAuthError.js";
 import ResetPassword from "./components/ResetPassword.js";
@@ -29,5 +30,8 @@ export default [
   {
     path: "/account/oauth-error",
     mainComponent: OAuthError
+  }, {
+    path: "/account/create",
+    mainComponent: CreateAccount
   }
 ];

@@ -17,6 +17,8 @@
   "signInWithFacebook":"Sign In with Facebook",
   "signInWithGoogle":"Sign In with Google",
   "signInWithTwitter":"Sign In with Twitter",
+  "signUpWithFacebook": "Register with Facebook",
+  "signUpWithGoogle": "Register with Google",
   "signUp": "Register",
   "signUpButton": "Register",
   "updateYourPassword": "Set new password"

@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory, useLocation } from "react-router-dom";
-import { makeStyles} from "@material-ui/core";
+import { makeStyles } from "@material-ui/core";
 import queryString from "query-string";
 import SimpleSchema from "simpl-schema";
 import useReactoForm from "reacto-form/cjs/useReactoForm";
@@ -12,8 +12,8 @@ import Field from "@reactioncommerce/components/Field/v1";
 import InlineAlert from "@reactioncommerce/components/InlineAlert/v1";
 import TextInput from "@reactioncommerce/components/TextInput/v1";
 import { Meteor } from "meteor/meteor";
-import {signInWithFacebook,signInWithGoogle} from "../../services/auth.js";
-import {Button as MaterialButton,Box} from "@material-ui/core"
+import { signInWithFacebook, signInWithGoogle } from "../../services/auth.js";
+import { Button as MaterialButton, Box } from "@material-ui/core"
 /**
  * @summary Does `Meteor.loginWithPassword` followed by
  *   calling the "oauth/login" method.
@@ -58,8 +58,8 @@ const useStyles = makeStyles(() => ({
     marginBottom: 40,
     textAlign: "center"
   },
-  button:{
-    width:'100%'
+  button: {
+    width: '100%'
   }
 }));
 
@@ -89,33 +89,35 @@ function SignIn() {
   const [submitError, setSubmitError] = useState(null);
 
   const { login_challenge: challenge } = queryString.parse(location.search);
-  const authWithFacebook =async ()=>{
+  const authWithFacebook = async () => {
     setIsSubmitting(true);
-      let redirectUrl;
-      try {
-        redirectUrl = await signInWithFacebook({ challenge });
-      } catch (error) {
-        setSubmitError(error.message);
-        setIsSubmitting(false);
-        return { ok: false };
-      }
+    let redirectUrl;
+    try {
+      redirectUrl = await signInWithFacebook({ challenge });
+    } catch (error) {
+      setSubmitError(error.message);
       setIsSubmitting(false);
-      if (redirectUrl) window.location.href = redirectUrl;
-      return { ok: true };
+      return { ok: false };
+    }
+    setIsSubmitting(false);
+    if (redirectUrl) window.location.href = redirectUrl;
+    return { ok: true };
   }
-  const authWithGoogle = async () =>{
+  const authWithGoogle = async () => {
     setIsSubmitting(true);
-      let redirectUrl;
-      try {
-        redirectUrl = await signInWithGoogle({ challenge });
-      } catch (error) {
-        setSubmitError(error.message);
-        setIsSubmitting(false);
-        return { ok: false };
-      }
+    let result;
+    try {
+      result = await signInWithGoogle({ challenge });
+    } catch (error) {
+      setSubmitError(error.message);
       setIsSubmitting(false);
-      if (redirectUrl) window.location.href = redirectUrl;
-      return { ok: true };
+      return { ok: false };
+    }
+    setIsSubmitting(false);
+    if (result.isNew) history.push(`/account/create?login_challenge=${challenge}`);
+
+    if (result.redirectUrl && !result.isNew) window.location.href = result.redirectUrl;
+    return { ok: true };
   }
   const {
     getErrors,
@@ -190,7 +192,7 @@ function SignIn() {
       >
         {t("signIn")}
       </Button>
-      
+
       <Button
         isDisabled={isSubmitting}
         isFullWidth
@@ -210,32 +212,32 @@ function SignIn() {
         {t("signUp")}
       </Button>
       <Box paddingTop={1}>
-      <MaterialButton 
-        variant="outlined"
-        active={isSubmitting}
-        onClick={authWithFacebook}
-        className={classes.button}
-        startIcon={
-          <img alt=''src="https://firebasestorage.googleapis.com/v0/b/twowheelstogo-572d7.appspot.com/o/resources%2Ffb.png?alt=media&token=d52db856-b93a-4c9b-896c-53a9d29ed2cd"
-           width={20} height={20}/>
-      }
-      >
-        {t("signInWithFacebook")}
-      </MaterialButton>
+        <MaterialButton
+          variant="outlined"
+          active={isSubmitting}
+          onClick={authWithFacebook}
+          className={classes.button}
+          startIcon={
+            <img alt='' src="https://firebasestorage.googleapis.com/v0/b/twowheelstogo-572d7.appspot.com/o/resources%2Ffb.png?alt=media&token=d52db856-b93a-4c9b-896c-53a9d29ed2cd"
+              width={20} height={20} />
+          }
+        >
+          {t("signInWithFacebook")}
+        </MaterialButton>
       </Box>
       <Box paddingTop={1}>
-      <MaterialButton 
-        variant="outlined"
-        active={isSubmitting}
-        onClick={authWithGoogle}
-        className={classes.button}
-        startIcon={
-          <img alt=''src="https://firebasestorage.googleapis.com/v0/b/twowheelstogo-572d7.appspot.com/o/resources%2Fgoogle.png?alt=media&token=a7f6ec8a-bc84-4235-8a57-38d10c027ec7"
-           width={20} height={20}/>
-      }
-      >
-        {t("signInWithGoogle")}
-      </MaterialButton>
+        <MaterialButton
+          variant="outlined"
+          active={isSubmitting}
+          onClick={authWithGoogle}
+          className={classes.button}
+          startIcon={
+            <img alt='' src="https://firebasestorage.googleapis.com/v0/b/twowheelstogo-572d7.appspot.com/o/resources%2Fgoogle.png?alt=media&token=a7f6ec8a-bc84-4235-8a57-38d10c027ec7"
+              width={20} height={20} />
+          }
+        >
+          {t("signInWithGoogle")}
+        </MaterialButton>
       </Box>
     </div>
   );

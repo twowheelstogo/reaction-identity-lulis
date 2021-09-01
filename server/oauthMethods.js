@@ -3,6 +3,7 @@ import { Meteor } from "meteor/meteor";
 import Logger from "@reactioncommerce/logger";
 import config from "./config.js";
 import hydra from "./hydra.js";
+import { Accounts } from "meteor/accounts-base";
 
 const { HYDRA_SESSION_LIFESPAN } = config;
 
@@ -69,6 +70,7 @@ export function extendFbUser() {
 
 export function extendGoogleUser() {
   var user = Meteor.user();
+
   if (user.hasOwnProperty('services') && user.services.hasOwnProperty('google')) {
     var google = user.services.google;
     // var result = Meteor.('https://graph.facebook.com/v2.4/' + fb.id + '?access_token=' + fb.accessToken + '&fields=name,email');
@@ -85,9 +87,8 @@ export function extendGoogleUser() {
 
 export function UpdateUserInfo(input) {
   const user = Meteor.user();
-
   Meteor.users.update({ _id: user._id }, {
-    $addToSet: {
+    $set: {
       "profile": {
         "firstName": input.firstName,
         "lastName": input.lastName,
@@ -95,4 +96,28 @@ export function UpdateUserInfo(input) {
       }
     }
   });
+}
+
+export function authAfterPopup() {
+  Accounts.oauth.tryLoginAfterPopupClosed = (credentialToken, callback) => {
+    const credentialSecret = OAuth._retrieveCredentialSecret(credentialToken) || null;
+    console.log("credentialSecret", credentialSecret);
+    console.log("credentialToken", credentialToken);
+    Accounts.callLoginMethod({
+      methodArguments: [{ oauth: { credentialToken, credentialSecret } }],
+      userCallback: callback && (err => callback(convertError(err))),
+    });
+  };
+}
+
+export function isNewUser() {
+  const user = Meteor.user();
+  if (user.hasOwnProperty('services') && user.services.hasOwnProperty('google')) {
+    var google = user.services.google;
+
+    if (Accounts.findUserByEmail(google.email)) return true;
+
+    return false;
+  }
+  return false;
 }
