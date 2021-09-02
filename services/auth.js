@@ -36,20 +36,18 @@ export function signInWithGoogle({ challenge }) {
                 resolve();
                 return;
             }
+            Meteor.call("oauth/isNewUser", (usrErr, isNew) => {
+                if (usrErr) {
+                    reject(usrErr);
+                }
             Meteor.call("oauth/extendGoogleUser", (err) => {
                 if (err) {
                     reject(err);
                 }
-                Meteor.call("oauth/isNewUser", (usrErr, isNew) => {
-                    if (usrErr) {
-                        reject(usrErr);
-                    }
-
                     if (isNew) {
                         resolve({ isNew });
                     }
                     else {
-
                         Meteor.call("oauth/login", { challenge }, (oauthLoginError, redirectUrl) => {
                             console.log(oauthLoginError);
                             if (oauthLoginError) {
@@ -59,7 +57,7 @@ export function signInWithGoogle({ challenge }) {
                             }
                         });
                     }
-                })
+                });
             });
         })
     })

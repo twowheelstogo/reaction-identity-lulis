@@ -114,10 +114,12 @@ export function isNewUser() {
   const user = Meteor.user();
   if (user.hasOwnProperty('services') && user.services.hasOwnProperty('google')) {
     var google = user.services.google;
+    
+    const current = Accounts.findUserByEmail(google.email);
 
-    if (Accounts.findUserByEmail(google.email)) return true;
+    if (current) return false;
 
-    return false;
+    return true;
   }
-  return false;
+  return true;
 }
