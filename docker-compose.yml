@@ -14,8 +14,8 @@ networks:
 services:
   identity:
     image: luiscelano/reaction-identity-lulis:1.0.1
-    build:
-      context: .
+#     build:
+#       context: .
     env_file:
       - ./.env
     networks:
