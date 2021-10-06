@@ -27,9 +27,9 @@ import { SignUpWithGoogle, signInWithFacebook } from "../../services/auth";
  * @return {Promise<String|undefined>} Redirect URL or `undefined` if no
  *   `challenge` argument was passed.
  */
-function callSignUp({ challenge, email, password, firstName, lastName }) {
+function callSignUp({ challenge, email, password, firstName, lastName, phone }) {
   return new Promise((resolve, reject) => {
-    Accounts.createUser({ email, password, profile: { firstName, lastName, name: `${firstName} ${lastName}` } }, (error) => {
+    Accounts.createUser({ email, password, profile: { firstName, lastName, name: `${firstName} ${lastName}`, phone } }, (error) => {
       if (error) {
         reject(error);
       } else {
@@ -87,6 +87,9 @@ const formSchema = new SimpleSchema({
   lastName: {
     type: String,
     optional: true
+  },
+  phone: {
+    type: String
   }
 });
 const validator = formSchema.getFormValidator();
@@ -196,6 +199,19 @@ function SignUp() {
           {...getInputProps("lastName")}
         />
         <ErrorsBlock errors={getErrors(["lastName"])} />
+      </Field>
+      <Field
+        errors={getErrors(["phone"])}
+        label={"Télefono"}
+        labelFor={`phone-${uniqueId}`}
+        name="lastName"
+      >
+        <TextInput
+          type="text"
+          id={`phone-${uniqueId}`}
+          {...getInputProps("phone")}
+        />
+        <ErrorsBlock errors={getErrors(["phone"])} />
       </Field>
       <Field
         errors={getErrors(["email"])}
