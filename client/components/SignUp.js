@@ -204,7 +204,7 @@ function SignUp() {
         errors={getErrors(["phone"])}
         label={"Télefono"}
         labelFor={`phone-${uniqueId}`}
-        name="lastName"
+        name="phone"
       >
         <TextInput
           type="text"
