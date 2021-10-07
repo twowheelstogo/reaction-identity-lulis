@@ -2,7 +2,7 @@ import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory, useLocation } from "react-router-dom";
 import { makeStyles } from "@material-ui/core";
-import { Button as MaterialButton, Box } from "@material-ui/core"
+import { Button as MaterialButton, Box } from "@material-ui/core";
 import queryString from "query-string";
 import SimpleSchema from "simpl-schema";
 import useReactoForm from "reacto-form/cjs/useReactoForm";
@@ -27,70 +27,93 @@ import { SignUpWithGoogle, signInWithFacebook } from "../../services/auth";
  * @return {Promise<String|undefined>} Redirect URL or `undefined` if no
  *   `challenge` argument was passed.
  */
-function callSignUp({ challenge, email, password, firstName, lastName, phone }) {
+function callSignUp({
+  challenge,
+  email,
+  password,
+  firstName,
+  lastName,
+  phone,
+}) {
   return new Promise((resolve, reject) => {
-    Accounts.createUser({ email, password, profile: { firstName, lastName, name: `${firstName} ${lastName}`, phone } }, (error) => {
-      if (error) {
-        reject(error);
-      } else {
-        if (!challenge) {
-          resolve();
-          return;
-        }
-        // Meteor.call("oauth/updateUserInfo", { firstName, lastName }, (err) => {
-        //   if (err) {
-        //     reject(err);
-        //   }
-        // });
-        Meteor.call("oauth/login", { challenge }, (oauthLoginError, redirectUrl) => {
-          if (oauthLoginError) {
-            reject(oauthLoginError);
-          } else {
-            resolve(redirectUrl);
+    Accounts.createUser(
+      {
+        email,
+        password,
+        profile: {
+          firstName,
+          lastName,
+          name: `${firstName} ${lastName}`,
+          phone,
+        },
+      },
+      (error) => {
+        if (error) {
+          reject(error);
+        } else {
+          if (!challenge) {
+            resolve();
+            return;
           }
-        });
+          // Meteor.call("oauth/updateUserInfo", { firstName, lastName }, (err) => {
+          //   if (err) {
+          //     reject(err);
+          //   }
+          // });
+          Meteor.call(
+            "oauth/login",
+            { challenge },
+            (oauthLoginError, redirectUrl) => {
+              if (oauthLoginError) {
+                reject(oauthLoginError);
+              } else {
+                resolve(redirectUrl);
+              }
+            }
+          );
+        }
       }
-    });
+    );
   });
 }
 
-
 const useStyles = makeStyles(() => ({
   inlineAlert: {
-    marginBottom: 16
+    marginBottom: 16,
   },
   pageTitle: {
     color: "#1999dd",
-    fontFamily: "'Source Sans Pro', 'Roboto', 'Helvetica Neue', Helvetica, sans-serif",
+    fontFamily:
+      "'Source Sans Pro', 'Roboto', 'Helvetica Neue', Helvetica, sans-serif",
     fontSize: 30,
     fontWeight: 400,
     marginBottom: 40,
-    textAlign: "center"
+    textAlign: "center",
   },
   button: {
-    width: '100%'
-  }
+    width: "100%",
+  },
 }));
 
 const formSchema = new SimpleSchema({
   email: {
     type: String,
-    min: 3
+    min: 3,
   },
   password: {
     type: String,
-    min: 6
+    min: 6,
   },
   firstName: {
-    type: String
+    type: String,
   },
   lastName: {
     type: String,
-    optional: true
+    optional: true,
   },
   phone: {
-    type: String
-  }
+    type: String,
+  },
 });
 const validator = formSchema.getFormValidator();
 
@@ -142,11 +165,7 @@ function SignUp() {
     return { ok: true };
   };
 
-  const {
-    getErrors,
-    getInputProps,
-    submitForm
-  } = useReactoForm({
+  const { getErrors, getInputProps, submitForm } = useReactoForm({
     async onSubmit(formData) {
       setIsSubmitting(true);
       let redirectUrl;
@@ -163,20 +182,18 @@ function SignUp() {
     },
     validator,
     onChange(formData) {
-      setValue(formData)
-    }
+      setValue(formData);
+    },
   });
 
   return (
     <div>
-      <div className={classes.pageTitle}>
-        {t("createAccount")}
-      </div>
+      <div className={classes.pageTitle}>{t("createAccount")}</div>
 
       <Field
         errors={getErrors(["firstName"])}
         isRequired
-        label={"Primer nombre"}
+        label={"Nombres"}
         labelFor={`firstName-${uniqueId}`}
         name="firstName"
       >
@@ -189,7 +206,7 @@ function SignUp() {
       </Field>
       <Field
         errors={getErrors(["lastName"])}
-        label={"Segundo nombre"}
+        label={"Apellidos"}
         labelFor={`lastName-${uniqueId}`}
         name="lastName"
       >
@@ -207,7 +224,7 @@ function SignUp() {
         name="phone"
       >
         <TextInput
-          type="text"
+          type="number"
           id={`phone-${uniqueId}`}
           {...getInputProps("phone")}
         />
@@ -242,13 +259,13 @@ function SignUp() {
         <ErrorsBlock errors={getErrors(["password"])} />
       </Field>
 
-      {submitError &&
+      {submitError && (
         <InlineAlert
           alertType="error"
           className={classes.inlineAlert}
           message={submitError}
         />
-      }
+      )}
 
       <Button
         actionType="important"
@@ -263,7 +280,9 @@ function SignUp() {
         isFullWidth
         isShortHeight
         isTextOnly
-        onClick={() => { history.push({ pathname: "/account/login", search: location.search }); }}
+        onClick={() => {
+          history.push({ pathname: "/account/login", search: location.search });
+        }}
       >
         {t("signIn")}
       </Button>
@@ -274,8 +293,12 @@ function SignUp() {
           onClick={signUpWithFacebook}
           className={classes.button}
           startIcon={
-            <img alt='' src="https://firebasestorage.googleapis.com/v0/b/twowheelstogo-572d7.appspot.com/o/resources%2Ffb.png?alt=media&token=d52db856-b93a-4c9b-896c-53a9d29ed2cd"
-              width={20} height={20} />
+            <img
+              alt=""
+              src="https://firebasestorage.googleapis.com/v0/b/twowheelstogo-572d7.appspot.com/o/resources%2Ffb.png?alt=media&token=d52db856-b93a-4c9b-896c-53a9d29ed2cd"
+              width={20}
+              height={20}
+            />
           }
         >
           {t("signUpWithFacebook")}
@@ -288,8 +311,12 @@ function SignUp() {
           onClick={signUpWithGoogle}
           className={classes.button}
           startIcon={
-            <img alt='' src="https://firebasestorage.googleapis.com/v0/b/twowheelstogo-572d7.appspot.com/o/resources%2Fgoogle.png?alt=media&token=a7f6ec8a-bc84-4235-8a57-38d10c027ec7"
-              width={20} height={20} />
+            <img
+              alt=""
+              src="https://firebasestorage.googleapis.com/v0/b/twowheelstogo-572d7.appspot.com/o/resources%2Fgoogle.png?alt=media&token=a7f6ec8a-bc84-4235-8a57-38d10c027ec7"
+              width={20}
+              height={20}
+            />
           }
         >
           {t("signUpWithGoogle")}
