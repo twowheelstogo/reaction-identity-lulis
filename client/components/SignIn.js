@@ -211,7 +211,7 @@ function SignIn() {
       >
         {t("signUp")}
       </Button>
-      <Box paddingTop={1}>
+      {/* <Box paddingTop={1}>
         <MaterialButton
           variant="outlined"
           active={isSubmitting}
@@ -224,7 +224,7 @@ function SignIn() {
         >
           {t("signInWithFacebook")}
         </MaterialButton>
-      </Box>
+      </Box> */}
       <Box paddingTop={1}>
         <MaterialButton
           variant="outlined"

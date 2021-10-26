@@ -23,9 +23,9 @@ import { Meteor } from "meteor/meteor";
  * @return {Promise<String|undefined>} Redirect URL or `undefined` if no
  *   `challenge` argument was passed.
  */
-function callSignIn({ challenge, firstName, lastName }) {
+function callSignIn({ challenge, firstName, lastName, phone }) {
     return new Promise((resolve, reject) => {
-        Meteor.call("oauth/updateUserInfo", { firstName, lastName }, (err) => {
+        Meteor.call("oauth/updateUserInfo", { firstName, lastName, phone }, (err) => {
             if (err) {
                 reject(err);
             }
@@ -64,6 +64,9 @@ const formSchema = new SimpleSchema({
     lastName: {
         type: String,
         optional: true
+    },
+    phone: {
+        type: String
     }
 });
 const validator = formSchema.getFormValidator();
@@ -115,7 +118,7 @@ function CreateAccount() {
                 isRequired
                 errors={getErrors(["firstName"])}
                 name="firstName"
-                label={"Primer nombre"}
+                label={"Nombres"}
                 labelFor={`firstName-${uniqueId}`}
             >
                 <TextInput
@@ -129,7 +132,7 @@ function CreateAccount() {
                 isRequired
                 errors={getErrors(["lastName"])}
                 name="lastName"
-                label={"Segundo nombre"}
+                label={"Apellidos"}
                 labelFor={`lastName-${uniqueId}`}
             >
                 <TextInput
@@ -138,6 +141,20 @@ function CreateAccount() {
                     {...getInputProps("lastName")}
                 />
                 <ErrorsBlock errors={getErrors(["lastName"])} />
+            </Field>
+            <Field
+                isRequired
+                errors={getErrors(["phone"])}
+                name="phone"
+                label={"Teléfono"}
+                labelFor={`phone-${uniqueId}`}
+            >
+                <TextInput
+                    type="number"
+                    id={`phone-${uniqueId}`}
+                    {...getInputProps("phone")}
+                />
+                <ErrorsBlock errors={getErrors(["phone"])} />
             </Field>
 
             {submitError &&

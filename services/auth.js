@@ -63,10 +63,12 @@ export function signInWithGoogle({ challenge }) {
     })
 }
 
-export function SignUpWithGoogle({ challenge, firstName, lastName }) {
+export function SignUpWithGoogle({ challenge, firstName, lastName, phone }) {
     console.log("challenge", challenge);
     return new Promise((resolve, reject) => {
         if (!firstName) reject(new Error("El campo 'Primer Nombre' es requerido!"));
+        if(!phone) reject(new Error("El campo 'Teléfono' es requerido!"));
+
         else {
             Meteor.loginWithGoogle({
                 requestPermissions: ["email"]
@@ -82,7 +84,7 @@ export function SignUpWithGoogle({ challenge, firstName, lastName }) {
                         reject(googleErr);
                     }
                     console.log("user extended");
-                    Meteor.call("oauth/updateUserInfo", { firstName, lastName }, (usrErr) => {
+                    Meteor.call("oauth/updateUserInfo", { firstName, lastName, phone }, (usrErr) => {
                         if (usrErr) {
                             reject(usrErr);
                         }

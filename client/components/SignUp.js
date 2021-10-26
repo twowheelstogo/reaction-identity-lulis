@@ -286,7 +286,13 @@ function SignUp() {
       >
         {t("signIn")}
       </Button>
-      <Box paddingTop={1}>
+      <hr></hr>
+        <small style={{
+          textAlign: "center",
+          color: "#737373",
+          fontFamily: "'Source Sans Pro','Helvetica Neue',Helvetica,sans-serif"
+        }}>Para registrarse con google los siguientes campos son requeridos (Primer Nombre, Teléfono)</small>
+      {/* <Box paddingTop={2}>
         <MaterialButton
           variant="outlined"
           active={isSubmitting}
@@ -303,8 +309,8 @@ function SignUp() {
         >
           {t("signUpWithFacebook")}
         </MaterialButton>
-      </Box>
-      <Box paddingTop={1}>
+      </Box> */}
+      <Box paddingTop={2}>
         <MaterialButton
           variant="outlined"
           active={isSubmitting}
