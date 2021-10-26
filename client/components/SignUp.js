@@ -193,6 +193,7 @@ function SignUp() {
       setValue(formData);
     },
   });
+  const date = new Date();
 
   return (
     <div>
@@ -342,6 +343,16 @@ function SignUp() {
           {t("signUpWithGoogle")}
         </MaterialButton>
       </Box>
+      <div
+        style={{
+          textAlign: "center",
+          color: "#737373",
+          fontFamily: "'Source Sans Pro','Helvetica Neue',Helvetica,sans-serif",
+          padding: "10px"
+        }}
+      >
+        <small>© {date.getFullYear()} Qubit Systems</small>
+      </div>
     </div>
   );
 }

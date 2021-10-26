@@ -45,12 +45,12 @@ const useStyles = makeStyles(() => ({
         marginBottom: 16
     },
     logo: {
-      width: "100%",
-      display: "flex",
-      flexDirection: "row",
-      justifyContent: "center",
-      alignItems: "center",
-      paddingBottom: "50px"
+        width: "100%",
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center",
+        paddingBottom: "50px"
     },
     pageTitle: {
         color: "#0095b3",
@@ -116,14 +116,16 @@ function CreateAccount() {
         validator
     });
 
+    const date = new Date();
+
     return (
         <div>
-        <div className={classes.logo}>
-          <img
-            src={logo}
-            width={100}
-          />
-        </div>
+            <div className={classes.logo}>
+                <img
+                    src={logo}
+                    width={100}
+                />
+            </div>
             <div className={classes.pageTitle}>
                 {"Crear Cuenta"}
             </div>
@@ -187,6 +189,16 @@ function CreateAccount() {
             >
                 {"Crear Cuenta"}
             </Button>
+            <div
+                style={{
+                    textAlign: "center",
+                    color: "#737373",
+                    fontFamily: "'Source Sans Pro','Helvetica Neue',Helvetica,sans-serif",
+                    padding: "10px"
+                }}
+            >
+                <small>© {date.getFullYear()} Qubit Systems</small>
+            </div>
         </div>
     );
 }

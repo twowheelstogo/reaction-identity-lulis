@@ -123,14 +123,16 @@ function ChangePassword() {
     value: formDocRef.current
   });
 
+  const date = new Date();
+
   return (
     <div>
-    <div className={classes.logo}>
-      <img
-        src={logo}
-        width={100}
-      />
-    </div>
+      <div className={classes.logo}>
+        <img
+          src={logo}
+          width={100}
+        />
+      </div>
       <div className={classes.pageTitle}>
         {t("changePassword")}
       </div>
@@ -202,6 +204,16 @@ function ChangePassword() {
       >
         {t("changePassword")}
       </Button>
+      <div
+        style={{
+          textAlign: "center",
+          color: "#737373",
+          fontFamily: "'Source Sans Pro','Helvetica Neue',Helvetica,sans-serif",
+          padding: "10px"
+        }}
+      >
+        <small>© {date.getFullYear()} Qubit Systems</small>
+      </div>
     </div>
   );
 }

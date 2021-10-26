@@ -102,6 +102,8 @@ function ResetPassword() {
     validator
   });
 
+  const date = new Date();
+
   return (
     <div>
     <div className={classes.logo}>
@@ -157,6 +159,16 @@ function ResetPassword() {
           {t("setPassword")}
         </Button>
       }
+      <div
+        style={{
+          textAlign: "center",
+          color: "#737373",
+          fontFamily: "'Source Sans Pro','Helvetica Neue',Helvetica,sans-serif",
+          padding: "10px"
+        }}
+      >
+        <small>© {date.getFullYear()} Qubit Systems</small>
+      </div>
     </div>
   );
 }
