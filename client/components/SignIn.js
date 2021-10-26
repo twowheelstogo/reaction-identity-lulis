@@ -50,6 +50,14 @@ const useStyles = makeStyles(() => ({
   inlineAlert: {
     marginBottom: 16
   },
+  logo: {
+    width: "100%",
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingBottom: "50px"
+  },
   pageTitle: {
     color: "#0095b3",
     fontFamily: "'Source Sans Pro', 'Roboto', 'Helvetica Neue', Helvetica, sans-serif",
@@ -143,6 +151,13 @@ function SignIn() {
 
   return (
     <div>
+      <div className={classes.logo}>
+        <img
+          src={logo}
+          width={100}
+        />
+      </div>
+
       <div className={classes.pageTitle}>
         {t("signIn")}
       </div>
@@ -242,5 +257,7 @@ function SignIn() {
     </div>
   );
 }
+
+const logo = "https://firebasestorage.googleapis.com/v0/b/twowheelstogo-572d7.appspot.com/o/resources%2FArtboard%201.png?alt=media&token=d217eb7f-efbe-4519-8bfa-1130b1725331";
 
 export default SignIn;
