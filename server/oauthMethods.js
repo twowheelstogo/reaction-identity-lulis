@@ -92,7 +92,8 @@ export function UpdateUserInfo(input) {
       "profile": {
         "firstName": input.firstName,
         "lastName": input.lastName,
-        "name": `${input.firstName} ${input.lastName}`
+        "name": `${input.firstName} ${input.lastName}`,
+        "phone": input.phone
       }
     }
   });

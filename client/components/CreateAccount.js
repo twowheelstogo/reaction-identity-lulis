@@ -23,9 +23,9 @@ import { Meteor } from "meteor/meteor";
  * @return {Promise<String|undefined>} Redirect URL or `undefined` if no
  *   `challenge` argument was passed.
  */
-function callSignIn({ challenge, firstName, lastName }) {
+function callSignIn({ challenge, firstName, lastName, phone }) {
     return new Promise((resolve, reject) => {
-        Meteor.call("oauth/updateUserInfo", { firstName, lastName }, (err) => {
+        Meteor.call("oauth/updateUserInfo", { firstName, lastName, phone }, (err) => {
             if (err) {
                 reject(err);
             }
@@ -43,6 +43,14 @@ function callSignIn({ challenge, firstName, lastName }) {
 const useStyles = makeStyles(() => ({
     inlineAlert: {
         marginBottom: 16
+    },
+    logo: {
+        width: "100%",
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center",
+        paddingBottom: "50px"
     },
     pageTitle: {
         color: "#0095b3",
@@ -64,6 +72,9 @@ const formSchema = new SimpleSchema({
     lastName: {
         type: String,
         optional: true
+    },
+    phone: {
+        type: String
     }
 });
 const validator = formSchema.getFormValidator();
@@ -105,8 +116,16 @@ function CreateAccount() {
         validator
     });
 
+    const date = new Date();
+
     return (
         <div>
+            <div className={classes.logo}>
+                <img
+                    src={logo}
+                    width={100}
+                />
+            </div>
             <div className={classes.pageTitle}>
                 {"Crear Cuenta"}
             </div>
@@ -115,7 +134,7 @@ function CreateAccount() {
                 isRequired
                 errors={getErrors(["firstName"])}
                 name="firstName"
-                label={"Primer nombre"}
+                label={"Nombres"}
                 labelFor={`firstName-${uniqueId}`}
             >
                 <TextInput
@@ -129,7 +148,7 @@ function CreateAccount() {
                 isRequired
                 errors={getErrors(["lastName"])}
                 name="lastName"
-                label={"Segundo nombre"}
+                label={"Apellidos"}
                 labelFor={`lastName-${uniqueId}`}
             >
                 <TextInput
@@ -138,6 +157,20 @@ function CreateAccount() {
                     {...getInputProps("lastName")}
                 />
                 <ErrorsBlock errors={getErrors(["lastName"])} />
+            </Field>
+            <Field
+                isRequired
+                errors={getErrors(["phone"])}
+                name="phone"
+                label={"Teléfono"}
+                labelFor={`phone-${uniqueId}`}
+            >
+                <TextInput
+                    type="number"
+                    id={`phone-${uniqueId}`}
+                    {...getInputProps("phone")}
+                />
+                <ErrorsBlock errors={getErrors(["phone"])} />
             </Field>
 
             {submitError &&
@@ -156,8 +189,20 @@ function CreateAccount() {
             >
                 {"Crear Cuenta"}
             </Button>
+            <div
+                style={{
+                    textAlign: "center",
+                    color: "#737373",
+                    fontFamily: "'Source Sans Pro','Helvetica Neue',Helvetica,sans-serif",
+                    padding: "10px"
+                }}
+            >
+                <small>© {date.getFullYear()} Qubit Systems</small>
+            </div>
         </div>
     );
 }
+const logo = "https://firebasestorage.googleapis.com/v0/b/twowheelstogo-572d7.appspot.com/o/resources%2FArtboard%201.png?alt=media&token=d217eb7f-efbe-4519-8bfa-1130b1725331";
+
 
 export default CreateAccount;
