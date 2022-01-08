@@ -13,7 +13,8 @@ import InlineAlert from "@reactioncommerce/components/InlineAlert/v1";
 import TextInput from "@reactioncommerce/components/TextInput/v1";
 import { Meteor } from "meteor/meteor";
 import { signInWithFacebook, signInWithGoogle } from "../../services/auth.js";
-import { Button as MaterialButton, Box } from "@material-ui/core"
+import { Button as MaterialButton, Box } from "@material-ui/core";
+import Checkbox from "@reactioncommerce/components/Checkbox/v1";
 /**
  * @summary Does `Meteor.loginWithPassword` followed by
  *   calling the "oauth/login" method.
@@ -35,20 +36,24 @@ function callSignIn({ challenge, email, password }) {
           resolve();
           return;
         }
-        Meteor.call("oauth/login", { challenge }, (oauthLoginError, redirectUrl) => {
-          if (oauthLoginError) {
-            reject(oauthLoginError);
-          } else {
-            resolve(redirectUrl);
+        Meteor.call(
+          "oauth/login",
+          { challenge },
+          (oauthLoginError, redirectUrl) => {
+            if (oauthLoginError) {
+              reject(oauthLoginError);
+            } else {
+              resolve(redirectUrl);
+            }
           }
-        });
+        );
       }
     });
   });
 }
 const useStyles = makeStyles(() => ({
   inlineAlert: {
-    marginBottom: 16
+    marginBottom: 16,
   },
   logo: {
     width: "100%",
@@ -56,29 +61,30 @@ const useStyles = makeStyles(() => ({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    paddingBottom: "50px"
+    paddingBottom: "50px",
   },
   pageTitle: {
     color: "#0095b3",
-    fontFamily: "'Source Sans Pro', 'Roboto', 'Helvetica Neue', Helvetica, sans-serif",
+    fontFamily:
+      "'Source Sans Pro', 'Roboto', 'Helvetica Neue', Helvetica, sans-serif",
     fontSize: 30,
     fontWeight: 400,
     marginBottom: 40,
-    textAlign: "center"
+    textAlign: "center",
   },
   button: {
-    width: '100%'
-  }
+    width: "100%",
+  },
 }));
 
 const formSchema = new SimpleSchema({
   email: {
     type: String,
-    min: 3
+    min: 3,
   },
   password: {
-    type: String
-  }
+    type: String,
+  },
 });
 const validator = formSchema.getFormValidator();
 
@@ -95,6 +101,7 @@ function SignIn() {
   const location = useLocation();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(null);
+  const [isNetworkSocial, setIsNetworkSocial] = useState(true);
 
   const { login_challenge: challenge } = queryString.parse(location.search);
   const authWithFacebook = async () => {
@@ -110,7 +117,7 @@ function SignIn() {
     setIsSubmitting(false);
     if (redirectUrl) window.location.href = redirectUrl;
     return { ok: true };
-  }
+  };
   const authWithGoogle = async () => {
     setIsSubmitting(true);
     let result;
@@ -122,16 +129,14 @@ function SignIn() {
       return { ok: false };
     }
     setIsSubmitting(false);
-    if (result.isNew) history.push(`/account/create?login_challenge=${challenge}`);
+    if (result.isNew)
+      history.push(`/account/create?login_challenge=${challenge}`);
 
-    if (result.redirectUrl && !result.isNew) window.location.href = result.redirectUrl;
+    if (result.redirectUrl && !result.isNew)
+      window.location.href = result.redirectUrl;
     return { ok: true };
-  }
-  const {
-    getErrors,
-    getInputProps,
-    submitForm
-  } = useReactoForm({
+  };
+  const { getErrors, getInputProps, submitForm } = useReactoForm({
     async onSubmit(formData) {
       setIsSubmitting(true);
       let redirectUrl;
@@ -146,7 +151,7 @@ function SignIn() {
       if (redirectUrl) window.location.href = redirectUrl;
       return { ok: true };
     },
-    validator
+    validator,
   });
 
   const date = new Date();
@@ -154,80 +159,78 @@ function SignIn() {
   return (
     <div>
       <div className={classes.logo}>
-        <img
-          src={logo}
-          width={100}
-        />
+        <img src={logo} width={100} />
       </div>
 
-      <div className={classes.pageTitle}>
-        {t("signIn")}
+      <div className={classes.pageTitle}>{t("signIn")}</div>
+      <Checkbox
+        label="Iniciar sesiòn vía Google"
+        value={isNetworkSocial}
+        onChange={(val) => {
+          setIsNetworkSocial(val);
+        }}
+      />
+      <div style={{ display: isNetworkSocial ? "none" : "block" }}>
+        <Field
+          isRequired
+          errors={getErrors(["email"])}
+          name="email"
+          label={t("emailAddress")}
+          labelFor={`email-${uniqueId}`}
+        >
+          <TextInput
+            type="email"
+            id={`email-${uniqueId}`}
+            {...getInputProps("email")}
+          />
+          <ErrorsBlock errors={getErrors(["email"])} />
+        </Field>
+        <Field
+          isRequired
+          errors={getErrors(["password"])}
+          name="password"
+          label={t("password")}
+          labelFor={`password-${uniqueId}`}
+        >
+          <TextInput
+            type="password"
+            id={`password-${uniqueId}`}
+            {...getInputProps("password")}
+          />
+          <ErrorsBlock errors={getErrors(["password"])} />
+        </Field>
+
+        {submitError && (
+          <InlineAlert
+            alertType="error"
+            className={classes.inlineAlert}
+            message={submitError}
+          />
+        )}
+
+        <Button
+          actionType="important"
+          isFullWidth
+          isWaiting={isSubmitting}
+          onClick={submitForm}
+        >
+          {t("signIn")}
+        </Button>
+        <Button
+          isDisabled={isSubmitting}
+          isFullWidth
+          isShortHeight
+          isTextOnly
+          onClick={() => {
+            history.push({
+              pathname: "/account/forgot-password",
+              search: location.search,
+            });
+          }}
+        >
+          {t("forgotPassword")}
+        </Button>
       </div>
-
-      <Field
-        isRequired
-        errors={getErrors(["email"])}
-        name="email"
-        label={t("emailAddress")}
-        labelFor={`email-${uniqueId}`}
-      >
-        <TextInput
-          type="email"
-          id={`email-${uniqueId}`}
-          {...getInputProps("email")}
-        />
-        <ErrorsBlock errors={getErrors(["email"])} />
-      </Field>
-      <Field
-        isRequired
-        errors={getErrors(["password"])}
-        name="password"
-        label={t("password")}
-        labelFor={`password-${uniqueId}`}
-      >
-        <TextInput
-          type="password"
-          id={`password-${uniqueId}`}
-          {...getInputProps("password")}
-        />
-        <ErrorsBlock errors={getErrors(["password"])} />
-      </Field>
-
-      {submitError &&
-        <InlineAlert
-          alertType="error"
-          className={classes.inlineAlert}
-          message={submitError}
-        />
-      }
-
-      <Button
-        actionType="important"
-        isFullWidth
-        isWaiting={isSubmitting}
-        onClick={submitForm}
-      >
-        {t("signIn")}
-      </Button>
-
-      <Button
-        isDisabled={isSubmitting}
-        isFullWidth
-        isShortHeight
-        isTextOnly
-        onClick={() => { history.push({ pathname: "/account/forgot-password", search: location.search }); }}
-      >
-        {t("forgotPassword")}
-      </Button>
-      <Button
-        isDisabled={isSubmitting}
-        isFullWidth
-        isShortHeight
-        isTextOnly
-        onClick={() => { history.push({ pathname: "/account/enroll", search: location.search }); }}
-      >
-        {t("signUp")}
-      </Button>
       {/* <Box paddingTop={1}>
         <MaterialButton
           variant="outlined"
@@ -242,26 +245,46 @@ function SignIn() {
           {t("signInWithFacebook")}
         </MaterialButton>
       </Box> */}
-      <Box paddingTop={1}>
-        <MaterialButton
-          variant="outlined"
-          active={isSubmitting}
-          onClick={authWithGoogle}
-          className={classes.button}
-          startIcon={
-            <img alt='' src="https://firebasestorage.googleapis.com/v0/b/twowheelstogo-572d7.appspot.com/o/resources%2Fgoogle.png?alt=media&token=a7f6ec8a-bc84-4235-8a57-38d10c027ec7"
-              width={20} height={20} />
-          }
-        >
-          {t("signInWithGoogle")}
-        </MaterialButton>
-      </Box>
+      <div style={{ display: isNetworkSocial ? "block" : "none" }}>
+        <Box paddingTop={1}>
+          <MaterialButton
+            variant="outlined"
+            active={isSubmitting}
+            onClick={authWithGoogle}
+            className={classes.button}
+            startIcon={
+              <img
+                alt=""
+                src="https://firebasestorage.googleapis.com/v0/b/twowheelstogo-572d7.appspot.com/o/resources%2Fgoogle.png?alt=media&token=a7f6ec8a-bc84-4235-8a57-38d10c027ec7"
+                width={20}
+                height={20}
+              />
+            }
+          >
+            {t("signInWithGoogle")}
+          </MaterialButton>
+        </Box>
+      </div>
+      <Button
+        isDisabled={isSubmitting}
+        isFullWidth
+        isShortHeight
+        isTextOnly
+        onClick={() => {
+          history.push({
+            pathname: "/account/enroll",
+            search: location.search,
+          });
+        }}
+      >
+        {t("signUp")}
+      </Button>
       <div
         style={{
           textAlign: "center",
           color: "#737373",
           fontFamily: "'Source Sans Pro','Helvetica Neue',Helvetica,sans-serif",
-          padding: "10px"
+          padding: "10px",
         }}
       >
         <small>© {date.getFullYear()} Qubit Systems</small>
@@ -270,6 +293,7 @@ function SignIn() {
   );
 }
 
-const logo = "https://firebasestorage.googleapis.com/v0/b/twowheelstogo-572d7.appspot.com/o/resources%2FArtboard%201.png?alt=media&token=d217eb7f-efbe-4519-8bfa-1130b1725331";
+const logo =
+  "https://firebasestorage.googleapis.com/v0/b/twowheelstogo-572d7.appspot.com/o/resources%2FArtboard%201.png?alt=media&token=d217eb7f-efbe-4519-8bfa-1130b1725331";
 
 export default SignIn;
