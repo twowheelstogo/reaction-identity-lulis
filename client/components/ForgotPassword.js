@@ -81,7 +81,6 @@ function ForgotPassword() {
         variables: {
           input: {
             email,
-            url: "https://identity.lulisgt.com/account/reset-password/TOKEN",
           },
         },
       });
