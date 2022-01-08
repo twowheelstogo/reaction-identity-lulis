@@ -15,6 +15,7 @@ import TextInput from "@reactioncommerce/components/TextInput/v1";
 import { Accounts } from "meteor/accounts-base";
 import { Meteor } from "meteor/meteor";
 import { SignUpWithGoogle, signInWithFacebook } from "../../services/auth";
+import Checkbox from "@reactioncommerce/components/Checkbox/v1";
 
 /**
  * @summary Does `Accounts.createUser` followed by
@@ -87,7 +88,7 @@ const useStyles = makeStyles(() => ({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    paddingBottom: "50px"
+    paddingBottom: "50px",
   },
   pageTitle: {
     color: "#1999dd",
@@ -139,6 +140,7 @@ function SignUp() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(null);
   const [value, setValue] = useState({});
+  const [isNetworkSocial, setIsNetworkSocial] = useState(true);
 
   const { login_challenge: challenge } = queryString.parse(location.search);
 
@@ -198,13 +200,16 @@ function SignUp() {
   return (
     <div>
       <div className={classes.logo}>
-        <img
-          src={logo}
-          width={100}
-        />
+        <img src={logo} width={100} />
       </div>
       <div className={classes.pageTitle}>{t("createAccount")}</div>
-
+      <Checkbox
+        label="Registrarse vía Google"
+        value={isNetworkSocial}
+        onChange={(val) => {
+          setIsNetworkSocial(val);
+        }}
+      />
       <Field
         errors={getErrors(["firstName"])}
         isRequired
@@ -245,34 +250,36 @@ function SignUp() {
         />
         <ErrorsBlock errors={getErrors(["phone"])} />
       </Field>
-      <Field
-        errors={getErrors(["email"])}
-        isRequired
-        label={t("emailAddress")}
-        labelFor={`email-${uniqueId}`}
-        name="email"
-      >
-        <TextInput
-          type="email"
-          id={`email-${uniqueId}`}
-          {...getInputProps("email")}
-        />
-        <ErrorsBlock errors={getErrors(["email"])} />
-      </Field>
-      <Field
-        errors={getErrors(["password"])}
-        isRequired
-        label={t("password")}
-        labelFor={`password-${uniqueId}`}
-        name="password"
-      >
-        <TextInput
-          type="password"
-          id={`password-${uniqueId}`}
-          {...getInputProps("password")}
-        />
-        <ErrorsBlock errors={getErrors(["password"])} />
-      </Field>
+      <div style={{ display: isNetworkSocial ? "none" : "block" }}>
+        <Field
+          errors={getErrors(["email"])}
+          isRequired
+          label={t("emailAddress")}
+          labelFor={`email-${uniqueId}`}
+          name="email"
+        >
+          <TextInput
+            type="email"
+            id={`email-${uniqueId}`}
+            {...getInputProps("email")}
+          />
+          <ErrorsBlock errors={getErrors(["email"])} />
+        </Field>
+        <Field
+          errors={getErrors(["password"])}
+          isRequired
+          label={t("password")}
+          labelFor={`password-${uniqueId}`}
+          name="password"
+        >
+          <TextInput
+            type="password"
+            id={`password-${uniqueId}`}
+            {...getInputProps("password")}
+          />
+          <ErrorsBlock errors={getErrors(["password"])} />
+        </Field>
+      </div>
 
       {submitError && (
         <InlineAlert
@@ -281,32 +288,44 @@ function SignUp() {
           message={submitError}
         />
       )}
-
-      <Button
-        actionType="important"
-        isFullWidth
-        isWaiting={isSubmitting}
-        onClick={submitForm}
-      >
-        {t("signUpButton")}
-      </Button>
-      <Button
-        isDisabled={isSubmitting}
-        isFullWidth
-        isShortHeight
-        isTextOnly
-        onClick={() => {
-          history.push({ pathname: "/account/login", search: location.search });
+      <div style={{ display: isNetworkSocial ? "none" : "block" }}>
+        <Button
+          actionType="important"
+          isFullWidth
+          isWaiting={isSubmitting}
+          onClick={submitForm}
+        >
+          {t("signUpButton")}
+        </Button>
+      </div>
+      <div style={{ display: "none" }}>
+        <Button
+          isDisabled={isSubmitting}
+          isFullWidth
+          isShortHeight
+          isTextOnly
+          onClick={() => {
+            history.push({
+              pathname: "/account/login",
+              search: location.search,
+            });
+          }}
+        >
+          {t("signIn")}
+        </Button>
+      </div>
+      <hr></hr>
+      <small
+        style={{
+          textAlign: "center",
+          color: "#737373",
+          fontFamily: "'Source Sans Pro','Helvetica Neue',Helvetica,sans-serif",
+          display: isNetworkSocial ? "block" : "none",
         }}
       >
-        {t("signIn")}
-      </Button>
-      <hr></hr>
-      <small style={{
-        textAlign: "center",
-        color: "#737373",
-        fontFamily: "'Source Sans Pro','Helvetica Neue',Helvetica,sans-serif"
-      }}>Para registrarse con google los siguientes campos son requeridos (Primer Nombre, Teléfono)</small>
+        Para registrarse con google, los siguientes campos son requeridos
+        (Primer Nombre, Teléfono)
+      </small>
       {/* <Box paddingTop={2}>
         <MaterialButton
           variant="outlined"
@@ -326,29 +345,31 @@ function SignUp() {
         </MaterialButton>
       </Box> */}
       <Box paddingTop={2}>
-        <MaterialButton
-          variant="outlined"
-          active={isSubmitting}
-          onClick={signUpWithGoogle}
-          className={classes.button}
-          startIcon={
-            <img
-              alt=""
-              src="https://firebasestorage.googleapis.com/v0/b/twowheelstogo-572d7.appspot.com/o/resources%2Fgoogle.png?alt=media&token=a7f6ec8a-bc84-4235-8a57-38d10c027ec7"
-              width={20}
-              height={20}
-            />
-          }
-        >
-          {t("signUpWithGoogle")}
-        </MaterialButton>
+        <div style={{ display: isNetworkSocial ? "block" : "none" }}>
+          <MaterialButton
+            variant="outlined"
+            active={isSubmitting}
+            onClick={signUpWithGoogle}
+            className={classes.button}
+            startIcon={
+              <img
+                alt=""
+                src="https://firebasestorage.googleapis.com/v0/b/twowheelstogo-572d7.appspot.com/o/resources%2Fgoogle.png?alt=media&token=a7f6ec8a-bc84-4235-8a57-38d10c027ec7"
+                width={20}
+                height={20}
+              />
+            }
+          >
+            {t("signUpWithGoogle")}
+          </MaterialButton>
+        </div>
       </Box>
       <div
         style={{
           textAlign: "center",
           color: "#737373",
           fontFamily: "'Source Sans Pro','Helvetica Neue',Helvetica,sans-serif",
-          padding: "10px"
+          padding: "10px",
         }}
       >
         <small>© {date.getFullYear()} Qubit Systems</small>
@@ -356,6 +377,7 @@ function SignUp() {
     </div>
   );
 }
-const logo = "https://firebasestorage.googleapis.com/v0/b/twowheelstogo-572d7.appspot.com/o/resources%2FArtboard%201.png?alt=media&token=d217eb7f-efbe-4519-8bfa-1130b1725331";
+const logo =
+  "https://firebasestorage.googleapis.com/v0/b/twowheelstogo-572d7.appspot.com/o/resources%2FArtboard%201.png?alt=media&token=d217eb7f-efbe-4519-8bfa-1130b1725331";
 
 export default SignUp;
