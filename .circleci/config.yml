@@ -71,9 +71,9 @@ jobs:
           name: Build and push production Docker image
           command: |
             VERSION=$(git describe --tags `git rev-list --tags --max-count=1` | cut -c2-100)
-            docker build -t ${DOCKER_REPOSITORY}:pre-launch . --network host
+            docker build -t ${DOCKER_REPOSITORY}:production . --network host
             docker login -u ${DOCKER_USER} -p ${DOCKER_PASS}
-            docker push ${DOCKER_REPOSITORY}:pre-launch
+            docker push ${DOCKER_REPOSITORY}:production
 
 workflows:
   version: 2
