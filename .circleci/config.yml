@@ -6,9 +6,9 @@ version: 2
 defaults: &defaults
   environment:
     CI_SCRIPTS: 'npx --quiet --package @reactioncommerce/ci-scripts@1.6.2'
-    DOCKER_REPOSITORY: "reactioncommerce/identity"
-    DOCKER_NAMESPACE: "reactioncommerce"
-    DOCKER_NAME: "identity"
+    DOCKER_REPOSITORY: "loginsolutions/reaction-identity-lulis"
+    DOCKER_NAMESPACE: "loginsolutions"
+    DOCKER_NAME: "reaction-identity-lulis"
   docker:
     - image: circleci/node:12.16.1-stretch
 only-deploy-trunk: &only-deploy-trunk
